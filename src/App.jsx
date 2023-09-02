@@ -6,8 +6,15 @@ import { checkWinner, checkEndGame } from "./Logic/Board";
 import WinnerModal from "./Components/WinnerModal";
 
 const App = () => {
-  const [board, setBoard] = useState(Array(9).fill(null));
-  const [turn, setTurn] = useState(TURNS.X);
+  const [board, setBoard] = useState(() => {
+    const boardFromStroge = window.localStorage.getItem("board");
+    if (boardFromStroge) return JSON.parse(boardFromStroge);
+    return Array(9).fill(null);
+  });
+  const [turn, setTurn] = useState(() => {
+    const turnFromStroge = window.localStorage.getItem("turn");
+    return turnFromStroge ?? TURNS.X;
+  });
   const [winner, setWinner] = useState(null);
 
   const upDateBoard = (index) => {
@@ -20,6 +27,9 @@ const App = () => {
     // Dependiendo del tipo de turno, sigue el otro.
     const newTurns = turn === TURNS.X ? TURNS.O : TURNS.X;
     setTurn(newTurns);
+    // Guardar partida
+    window.localStorage.setItem("board", JSON.stringify(newBoard));
+    window.localStorage.setItem("turn", newTurns);
     // Revisar si hay ganador
     const newWinner = checkWinner(newBoard);
     if (newWinner) {
@@ -34,11 +44,14 @@ const App = () => {
     setBoard(Array(9).fill(null));
     setTurn(TURNS.X);
     setWinner(null);
+    window.localStorage.removeItem("board");
+    window.localStorage.removeItem("turn");
   };
 
   return (
     <>
       <main className="board">
+        <button onClick={resetBoard}>Reset del juego</button>
         <section className="game">
           {board.map((square, index) => {
             return (
