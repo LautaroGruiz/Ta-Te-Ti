@@ -51,7 +51,7 @@ const App = () => {
 
   const upDateBoard = (index) => {
     // No actualizar la posicion si ya tiene marca.
-    if (board[index] ||  winner) return;
+    if (board[index] || winner) return;
     // Clonamos los datos del estado del tablero para crear un nuevo estado y actualizar.
     const newBoard = [...board];
     newBoard[index] = turn;
@@ -60,10 +60,16 @@ const App = () => {
     const newTurns = turn === TURNS.X ? TURNS.O : TURNS.X;
     setTurn(newTurns);
     // Revisar si hay ganador
-    const newWinner = checkWinner(newBoard)
+    const newWinner = checkWinner(newBoard);
     if (newWinner) {
       setWinner(newWinner);
     }
+  };
+
+  const resetBoard = () => {
+    setBoard(Array(9).fill(null));
+    setTurn(TURNS.X);
+    setWinner(null);
   };
 
   return (
@@ -81,6 +87,21 @@ const App = () => {
         <section className="turns">
           <Square isSelected={turn === TURNS.X}>{TURNS.X}</Square>
           <Square isSelected={turn === TURNS.O}>{TURNS.O}</Square>
+        </section>
+        <section className="">
+          {winner !== null && (
+            <section className="winner">
+              <div className="text">
+                <h2>{winner === false ? "Empate" : "Ganó"}</h2>
+                <header className="win">
+                  {winner && <Square>{winner}</Square>}
+                </header>
+                <footer>
+                  <button onClick={resetBoard}>Empezar de nuevo</button>
+                </footer>
+              </div>
+            </section>
+          )}
         </section>
       </main>
     </>
